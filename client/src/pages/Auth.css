@@ -1,0 +1,181 @@
+/* Full Page Centering */
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:  linear-gradient(135deg, #081229 0%, #0f253a 100%);
+  font-family: "Segoe UI", sans-serif;
+  margin-top: 5vh;
+  height: 95vh;
+}
+
+/* Centered Card */
+.auth-card {
+  width: 80%;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  overflow: hidden;
+  background: transparent;
+  box-shadow: 0 4px 20px rgba(99, 193, 219, 0.15);
+  border-radius: 12px;
+  transition: all 0.8s ease-in-out;
+}
+
+/* Split Panels */
+.form-section,
+.info-section {
+  width: 50%;
+  transition: all 0.8s ease;
+}
+
+/* Form Section (White) */
+.form-section {
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
+  width: 75%;
+  max-width: 350px;
+  text-align: left;
+}
+
+.form-container h2 {
+  color: #081229;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form label {
+  font-weight: 600;
+  color: #333;
+}
+
+form input,
+form select {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 1rem;
+}
+
+form input:focus,
+form select:focus {
+  border-color: rgb(99, 193, 219);
+}
+
+form button {
+  background: rgb(99, 193, 219);
+  border: none;
+  padding: 0.8rem;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+form button:hover {
+  background: #76d0e0;
+  transform: scale(1.05);
+}
+
+/* Info Section (Themed Background) */
+.info-section {
+    background: linear-gradient(135deg, #081229 0%, #0f253a 100%);
+  color: rgb(99, 193, 219);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.info-content {
+  width: 80%;
+  max-width: 350px;
+}
+
+.info-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: rgb(99, 193, 219);
+}
+
+.info-content p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #cdeef6;
+}
+
+.info-content button {
+  background: #ffffff;
+  color: #081229;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.info-content button:hover {
+  background: rgb(99, 193, 219);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* Animation States */
+.login-mode .form-section {
+  transform: translateX(0%);
+}
+
+.login-mode .info-section {
+  transform: translateX(0%);
+}
+
+.register-mode .form-section {
+  transform: translateX(100%);
+}
+
+.register-mode .info-section {
+  transform: translateX(-100%);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .auth-card {
+    flex-direction: column;
+    height: auto;
+    width: 90%;
+  }
+
+  .form-section,
+  .info-section {
+    width: 100%;
+    transform: none !important;
+    min-height: 50vh;
+  }
+}
+
+.status-msg {
+  margin-top: 10px;
+  font-weight: 500;
+  color: #333;
+}
+
+.note {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 4px;
+}

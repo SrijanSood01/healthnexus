@@ -1,0 +1,263 @@
+/* Admin Dashboard — H.E.A.L Aqua Theme */
+
+.admin-dashboard {
+  margin-top: 100px; /* below navbar */
+  min-height: 100vh;
+  padding: 2rem 4rem;
+  background: linear-gradient(135deg, #081229 0%, #0f253a 100%);
+  color: #e0f7fa;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.admin-dashboard h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: rgb(99, 193, 219);
+  margin-bottom: 2rem;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+/* Stats Section */
+.admin-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.admin-stats .stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(99, 193, 219, 0.4);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 1.5rem 2rem;
+  width: 200px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(99, 193, 219, 0.15);
+}
+
+.admin-stats .stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(99, 193, 219, 0.35);
+}
+
+.admin-stats h3 {
+  color: rgb(99, 193, 219);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.admin-stats p {
+  color: #b2ebf2;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Section Titles */
+.admin-dashboard h3 {
+  color: rgb(99, 193, 219);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* User Management Table */
+.admin-dashboard table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(99, 193, 219, 0.15);
+  margin-bottom: 2.5rem;
+}
+
+.admin-dashboard th,
+.admin-dashboard td {
+  padding: 1rem;
+  text-align: left;
+  color: #e0f7fa;
+  border-bottom: 1px solid rgba(99, 193, 219, 0.15);
+}
+
+.admin-dashboard th {
+  background: rgba(99, 193, 219, 0.3);
+  color: rgb(99, 193, 219);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.admin-dashboard tr:hover {
+  background: rgba(99, 193, 219, 0.1);
+}
+
+/* Buttons (Activate/Deactivate/Generate) */
+.admin-dashboard button {
+  padding: 0.8rem 1.5rem;
+  background: rgb(99, 193, 219);
+  color: #081229;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.admin-dashboard button:hover {
+  background: #76d0e0;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(99, 193, 219, 0.4);
+}
+
+/* Reports Section */
+.reports {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(99, 193, 219, 0.15);
+  backdrop-filter: blur(8px);
+  max-width: 700px;
+  margin: 2rem auto;
+}
+
+.reports ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5rem;
+}
+
+.reports li {
+  font-size: 1rem;
+  color: #e0f7fa;
+  margin: 0.8rem 0;
+  border-bottom: 1px solid rgba(99, 193, 219, 0.15);
+  padding-bottom: 0.5rem;
+}
+
+.reports li:last-child {
+  border-bottom: none;
+}
+
+/* Hover Glow */
+.stat-card,
+.admin-dashboard button {
+  transition: all 0.3s ease-in-out;
+}
+.stat-card:hover,
+.admin-dashboard button:hover {
+  box-shadow: 0 0 20px rgba(99, 193, 219, 0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(99, 193, 219);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #081229;
+}
+
+/* Responsive Layout */
+@media (max-width: 900px) {
+  .admin-dashboard {
+    padding: 2rem;
+  }
+  .admin-stats .stat-card {
+    width: 100%;
+    max-width: 320px;
+  }
+  .admin-dashboard table {
+    font-size: 0.85rem;
+  }
+  .reports {
+    width: 90%;
+  }
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal Content */
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-in-out;
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modal-content input,
+.modal-content select {
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.modal-actions button {
+  flex: 1;
+  margin: 0 5px;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+}
+
+.modal-actions button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
