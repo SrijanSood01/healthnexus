@@ -1,60 +1,123 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo_white.png";
 
 function Navbar() {
+
   const [scrolled, setScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
+
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
 
-    // check login status
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
 
     return () => window.removeEventListener("scroll", handleScroll);
+
   }, []);
 
+
+  const goToMyPage = () => {
+
+    const role = localStorage.getItem("role");
+
+    if (!role) {
+      navigate("/auth");
+      return;
+    }
+
+    const r = role.toLowerCase();
+
+    if (r === "doctor") navigate("/doctor");
+    else if (r === "patient") navigate("/patient");
+    else if (r === "admin") navigate("/admin");
+    else if (r === "pharmacy") navigate("/pharmacy");
+    else if (r === "pathology") navigate("/pathology");
+    else navigate("/");
+
+  };
+
+
   const handleLogout = () => {
+
     localStorage.clear();
     setIsLoggedIn(false);
     navigate("/auth");
+
   };
 
+
+  const isMyPageActive =
+    location.pathname === "/doctor" ||
+    location.pathname === "/patient" ||
+    location.pathname === "/admin" ||
+    location.pathname === "/pharmacy" ||
+    location.pathname === "/pathology";
+
+
   return (
+
     <nav className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
-      
-      {/* Left - Logo */}
+
+      {/* Logo */}
       <div className="logo">
         <img src={logo} alt="HEAL Logo" className="logo-img" />
         <h2>Health Nexus</h2>
       </div>
 
-      {/* Center - Nav Links */}
+
+      {/* Navigation */}
       <ul className="nav-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/doctor">Doctor</Link></li>
-        <li><Link to="/patient">Patient</Link></li>
-        <li><Link to="/admin">Admin</Link></li>
-        <li><Link to="/pharmacy">Pharmacy</Link></li>
-        <li><Link to="/pathology">Pathology</Link></li>
+
+        <li>
+          <NavLink to="/" end>Home</NavLink>
+        </li>
+
+        <li>
+          <a
+            href="/mypage"
+            onClick={(e) => {
+              e.preventDefault();
+              goToMyPage();
+            }}
+            className={isMyPageActive ? "active" : ""}
+          >
+            My Page
+          </a>
+        </li>
+
       </ul>
 
-      {/* Right - Auth Buttons */}
+
+      {/* Auth */}
       <div className="auth-btn">
+
         {isLoggedIn ? (
-          <button onClick={handleLogout}>Logout</button>
+
+          <button onClick={handleLogout}>
+            Logout
+          </button>
+
         ) : (
-          <Link to="/auth">
-            <button>Login / Register</button>
-          </Link>
+
+          <NavLink to="/auth">
+            <button>Login</button>
+          </NavLink>
+
         )}
+
       </div>
+
     </nav>
+
   );
+
 }
 
 export default Navbar;

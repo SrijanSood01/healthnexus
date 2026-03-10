@@ -9,6 +9,7 @@ import PatientDashboard from "./pages/PatientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import PharmacyDashboard from "./pages/PharmacyDashboard";
 import PathologyDashboard from "./pages/PathologyDashboard";
+import MyPageRedirect from "./pages/MyPageRedirect";
 import AIChatbot from "./components/AIChatbot";
 
 import "./App.css";
@@ -21,7 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<Auth />} />
-
+        <Route path="/mypage" element={<MyPageRedirect />} />
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 
 function Auth() {
+
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
 
@@ -13,33 +14,55 @@ function Auth() {
     password: "",
   });
 
-  // ✅ Auto redirect if already logged in
+  // Auto redirect if already logged in
   useEffect(() => {
+
     const role = localStorage.getItem("role");
+
     if (role) {
       redirectByRole(role);
     }
+
   }, []);
 
+
+  // Redirect based on role
   const redirectByRole = (role) => {
-    if (role === "admin") navigate("/admin");
-    else if (role === "doctor") navigate("/doctor");
-    else if (role === "patient") navigate("/patient");
-    else if (role === "pharmacy") navigate("/pharmacy");
-    else if (role === "pathology") navigate("/pathology");
-    else navigate("/");
+
+    const routes = {
+      admin: "/admin",
+      doctor: "/doctor",
+      patient: "/patient",
+      pharmacy: "/pharmacy",
+      pathology: "/pathology"
+    };
+
+    const r = role.toLowerCase();
+
+    navigate(routes[r] || "/");
+
   };
+
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+
   };
 
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     try {
+
       if (isLogin) {
-        // 🔐 LOGIN
+
+        // LOGIN
         const res = await axios.post(
           "http://localhost:5000/api/auth/login",
           {
@@ -53,33 +76,50 @@ function Auth() {
         localStorage.setItem("role", res.data.user.role);
         localStorage.setItem("name", res.data.user.name);
 
+        // Redirect user
         redirectByRole(res.data.user.role);
+
       } else {
-        // 📝 REGISTER (Patient only)
+
+        // REGISTER (Patient only)
         const res = await axios.post(
           "http://localhost:5000/api/auth/register",
           {
             name: formData.name,
             email: formData.email,
             password: formData.password,
-            role: "patient",
+            role: "patient"
           }
         );
 
         alert(res.data.message);
         setIsLogin(true);
+
       }
+
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong");
+
+      alert(
+        error.response?.data?.message ||
+        "Something went wrong"
+      );
+
     }
+
   };
 
+
   return (
+
     <div className="auth-page">
+
       <div className={`auth-card ${isLogin ? "login-mode" : "register-mode"}`}>
-        
+
+        {/* FORM SECTION */}
         <div className="form-section">
+
           <div className="form-container">
+
             <h2>
               {isLogin
                 ? "Login to Health Nexus"
@@ -87,9 +127,11 @@ function Auth() {
             </h2>
 
             <form onSubmit={handleSubmit}>
+
               {!isLogin && (
                 <>
                   <label>Full Name</label>
+
                   <input
                     type="text"
                     name="name"
@@ -101,6 +143,7 @@ function Auth() {
               )}
 
               <label>Email</label>
+
               <input
                 type="email"
                 name="email"
@@ -110,6 +153,7 @@ function Auth() {
               />
 
               <label>Password</label>
+
               <input
                 type="password"
                 name="password"
@@ -121,35 +165,59 @@ function Auth() {
               <button type="submit">
                 {isLogin ? "Login" : "Register"}
               </button>
+
             </form>
+
           </div>
+
         </div>
 
+
+        {/* INFO SECTION */}
         <div className="info-section">
+
           <div className="info-content">
+
             {isLogin ? (
+
               <>
                 <h2>New to Health Nexus?</h2>
-                <p>Join our unified hospital management ecosystem today.</p>
+
+                <p>
+                  Join our unified hospital management ecosystem today.
+                </p>
+
                 <button onClick={() => setIsLogin(false)}>
                   Register Now
                 </button>
               </>
+
             ) : (
+
               <>
                 <h2>Already have an account?</h2>
-                <p>Login to continue your journey with Health Nexus.</p>
+
+                <p>
+                  Login to continue your journey with Health Nexus.
+                </p>
+
                 <button onClick={() => setIsLogin(true)}>
                   Login
                 </button>
               </>
+
             )}
+
           </div>
+
         </div>
 
       </div>
+
     </div>
+
   );
+
 }
 
 export default Auth;
