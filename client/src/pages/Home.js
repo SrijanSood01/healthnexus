@@ -7,7 +7,7 @@ function Home() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-text">
-          <h1>Welcome to H.E.A.L Hospital</h1>
+          <h1>Welcome to Health Nexus Hospital</h1>
           <p>Your health, our priority. Experience smarter, faster, and compassionate healthcare.</p>
           <button className="cta-btn">Book Appointment</button>
         </div>
@@ -42,7 +42,7 @@ function Home() {
       <section className="about">
         <h2>About Us</h2>
         <p>
-          H.E.A.L is a modern digital hospital committed to delivering
+          Health Nexus is a modern digital hospital committed to delivering
           efficient, transparent, and patient-friendly healthcare. With AI-driven
           insights, seamless coordination, and cloud-powered systems, we ensure
           your health journey is smooth and stress-free.
@@ -59,7 +59,7 @@ function Home() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>© 2025 H.E.A.L Hospital | All Rights Reserved</p>
+        <p>© 2025 Health Nexus Hospital | All Rights Reserved</p>
       </footer>
     </div>
   );

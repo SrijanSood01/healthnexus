@@ -1,7 +1,7 @@
 {
   "name": "heal-server",
   "version": "1.0.0",
-  "description": "Backend server for the H.E.A.L ecosystem using Express, Mongoose, and MongoDB Atlas",
+  "description": "Backend server for the Health Nexus ecosystem using Express, Mongoose, and MongoDB Atlas",
   "type": "module",
   "main": "server.js",
   "scripts": {

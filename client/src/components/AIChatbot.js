@@ -1,147 +1,61 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./AIChatbot.css";
+import React, { useState } from "react";
 
 function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "👋 Hello! I'm your H.E.A.L Assistant. How can I help you today?", options: [
-      "📋 View My Prescriptions",
-      "📅 Book an Appointment",
-      "🧾 View Reports",
-      "💬 Talk to My Doctor",
-    ] },
+    { sender: "bot", text: "Hello 👋 I’m your Health Nexus Assistant. How can I help you today?" }
   ]);
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef(null);
+  const [input, setInput] = useState("");
 
-  // Scroll to latest message
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  const handleSend = () => {
+    if (input.trim() === "") return;
 
-  // Handles when a patient clicks an option
-  const handleOptionClick = (option) => {
-    const userMsg = { sender: "user", text: option };
-    setMessages((prev) => [...prev, userMsg]);
-    setIsTyping(true);
+    // Add user message
+    const newMessages = [...messages, { sender: "user", text: input }];
 
-    setTimeout(() => {
-      const botReply = getBotResponse(option);
-      setMessages((prev) => [...prev, botReply]);
-      setIsTyping(false);
-    }, 900);
-  };
+    // Add bot reply (for now static)
+    newMessages.push({ sender: "bot", text: "✅ Thanks! I’ll forward this to our system." });
 
-  // 🧠 Smart flow-based bot replies
-  const getBotResponse = (option) => {
-    switch (option) {
-      case "📋 View My Prescriptions":
-        return {
-          sender: "bot",
-          text: "You currently have 3 active prescriptions. Would you like to see details or download them?",
-          options: ["📄 View Details", "⬇️ Download PDF", "🔙 Go Back"],
-        };
-
-      case "📅 Book an Appointment":
-        return {
-          sender: "bot",
-          text: "Sure! Which department would you like to book an appointment with?",
-          options: ["❤️ Cardiology", "🦴 Orthopedics", "🩺 General Medicine", "🔙 Go Back"],
-        };
-
-      case "🧾 View Reports":
-        return {
-          sender: "bot",
-          text: "You have 1 pending and 2 completed lab reports. What would you like to do?",
-          options: ["📤 Download Completed", "🕒 View Pending", "🔙 Go Back"],
-        };
-
-      case "💬 Talk to My Doctor":
-        return {
-          sender: "bot",
-          text: "Would you like to chat with your assigned doctor or schedule a call?",
-          options: ["💬 Chat with Doctor", "📞 Schedule Call", "🔙 Go Back"],
-        };
-
-      // Sub-choices
-      case "📄 View Details":
-        return { sender: "bot", text: "Opening your prescriptions page...", options: [] };
-
-      case "⬇️ Download PDF":
-        return { sender: "bot", text: "Preparing download link for your prescriptions...", options: [] };
-
-      case "❤️ Cardiology":
-      case "🦴 Orthopedics":
-      case "🩺 General Medicine":
-        return {
-          sender: "bot",
-          text: `Got it! Booking an appointment in ${option.replace("🩺", "").trim()}...`,
-          options: [],
-        };
-
-      case "📤 Download Completed":
-        return { sender: "bot", text: "Downloading completed reports...", options: [] };
-
-      case "🕒 View Pending":
-        return { sender: "bot", text: "You have one pending test: X-Ray (Left Leg).", options: [] };
-
-      case "💬 Chat with Doctor":
-        return { sender: "bot", text: "Starting secure chat with your doctor...", options: [] };
-
-      case "📞 Schedule Call":
-        return { sender: "bot", text: "Scheduling a call with your doctor...", options: [] };
-
-      case "🔙 Go Back":
-        return {
-          sender: "bot",
-          text: "How can I help you today?",
-          options: [
-            "📋 View My Prescriptions",
-            "📅 Book an Appointment",
-            "🧾 View Reports",
-            "💬 Talk to My Doctor",
-          ],
-        };
-
-      default:
-        return { sender: "bot", text: "I'm still learning! Please choose another option.", options: [] };
-    }
+    setMessages(newMessages);
+    setInput("");
   };
 
   return (
     <div className="chatbot">
-      {/* Floating button */}
+      {/* Floating Button */}
       {!isOpen && (
         <button className="chatbot-btn" onClick={() => setIsOpen(true)}>
           💬
         </button>
       )}
 
-      {/* Chat window */}
+      {/* Chat Window */}
       {isOpen && (
         <div className="chatbot-window">
           <div className="chatbot-header">
-            <h4>H.E.A.L Assistant</h4>
+            <h4>Health Nexus Assistant</h4>
             <button onClick={() => setIsOpen(false)}>✖</button>
           </div>
 
           <div className="chatbot-messages">
-            {messages.map((msg, i) => (
-              <div key={i} className={`chat-msg ${msg.sender === "user" ? "user-msg" : "bot-msg"}`}>
-                <p>{msg.text}</p>
-                {msg.options && msg.options.length > 0 && (
-                  <div className="options">
-                    {msg.options.map((opt, j) => (
-                      <button key={j} onClick={() => handleOptionClick(opt)}>
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                )}
+            {messages.map((msg, index) => (
+              <div 
+                key={index} 
+                className={`chat-msg ${msg.sender === "user" ? "user-msg" : "bot-msg"}`}
+              >
+                {msg.text}
               </div>
             ))}
-            {isTyping && <p className="typing">H.E.A.L is typing...</p>}
-            <div ref={messagesEndRef}></div>
+          </div>
+
+          <div className="chatbot-input">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+            />
+            <button onClick={handleSend}>Send</button>
           </div>
         </div>
       )}

@@ -1,46 +1,20 @@
-import React, { useEffect, useState } from "react";
-import "./PatientDashboard.css";
+import React from "react";
+import './PatientDashboard.css';
+
 
 function PatientDashboard() {
-  const [dashboardData, setDashboardData] = useState(null);
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    const fetchPatientDashboard = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/patients/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) setDashboardData(data);
-      } catch (err) {
-        console.error("Error fetching patient dashboard:", err);
-      }
-    };
-    fetchPatientDashboard();
-  }, [token]);
-
-  if (!dashboardData) {
-    return <p>Loading your dashboard...</p>;
-  }
-
-  const { profile, prescriptions, appointments, billing } = dashboardData;
-
   return (
     <div className="dashboard patient-dashboard">
-      <h2>Welcome, {profile.name}</h2>
-      <p>Email: {profile.email}</p>
+      <h2>Patient Dashboard</h2>
 
       {/* Quick Stats */}
       <section className="patient-stats">
         <div className="stat-card">
-          <h3>{appointments.length}</h3>
+          <h3>2</h3>
           <p>Upcoming Appointments</p>
         </div>
         <div className="stat-card">
-          <h3>{prescriptions.length}</h3>
+          <h3>5</h3>
           <p>Active Prescriptions</p>
         </div>
         <div className="stat-card">
@@ -49,67 +23,58 @@ function PatientDashboard() {
         </div>
       </section>
 
-      {/* Appointments */}
+      {/* Upcoming Appointments */}
       <section className="appointments">
         <h3>Upcoming Appointments</h3>
-        {appointments.length === 0 ? (
-          <p>No upcoming appointments yet.</p>
-        ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Doctor</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Department</th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((a, i) => (
-                <tr key={i}>
-                  <td>{a.doctorName}</td>
-                  <td>{a.date}</td>
-                  <td>{a.time}</td>
-                  <td>{a.department}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        <table>
+          <thead>
+            <tr>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Department</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Dr. Meera Kapoor</td>
+              <td>12 Jan, 2026</td>
+              <td>10:00 AM</td>
+              <td>Cardiology</td>
+            </tr>
+            <tr>
+              <td>Dr. Anil Verma</td>
+              <td>18 Jan, 2026</td>
+              <td>4:30 PM</td>
+              <td>Orthopedics</td>
+            </tr>
+          </tbody>
+        </table>
       </section>
 
       {/* Prescriptions */}
       <section className="prescriptions">
-        <h3>My Prescriptions</h3>
-        {prescriptions.length === 0 ? (
-          <p>No prescriptions yet.</p>
-        ) : (
-          prescriptions.map((p) => (
-            <div key={p._id} className="prescription-card">
-              <h4>
-                From Dr. {p.doctor?.name} –{" "}
-                {new Date(p.createdAt).toLocaleDateString()}
-              </h4>
-              <ul>
-                {p.medicines.map((m, i) => (
-                  <li key={i}>
-                    {m.name} ({m.type}) – {m.dosageM && "M"} {m.dosageA && "A"}{" "}
-                    {m.dosageN && "N"} | Qty: {m.quantity}
-                  </li>
-                ))}
-              </ul>
-              <p>
-                <strong>Remarks:</strong> {p.overallRemarks}
-              </p>
-            </div>
-          ))
-        )}
+        <h3>Active Prescriptions</h3>
+        <ul>
+          <li>Metformin 500mg – Twice a day</li>
+          <li>Vitamin D3 – Once a week</li>
+          <li>Paracetamol 650mg – As required</li>
+        </ul>
+      </section>
+
+      {/* Lab Results */}
+      <section className="lab-results">
+        <h3>Lab Reports</h3>
+        <ul>
+          <li>Blood Sugar Test – <strong>Completed</strong> (Download)</li>
+          <li>X-Ray (Leg) – <strong>Pending</strong></li>
+        </ul>
       </section>
 
       {/* Billing */}
       <section className="billing">
         <h3>Billing</h3>
-        <p>Total Due: ₹{billing.totalDue}</p>
+        <p>Total Due: ₹1,200</p>
         <button>💳 Pay Bill</button>
       </section>
     </div>

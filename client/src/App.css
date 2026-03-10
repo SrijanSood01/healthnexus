@@ -8,7 +8,7 @@ body {
 }
 
 /* ===================== */
-/* NAVBAR — H.E.A.L THEME */
+/* NAVBAR — Health Nexus THEME */
 /* ===================== */
 
 /* Base Navbar */
@@ -299,19 +299,57 @@ body {
   }
 }
 
+.services {
+  padding: 5rem 2rem;
+  text-align: center;
+  background: linear-gradient(180deg, #0f253a 0%, #081229 100%);
+}
+
+.services h2 {
+  font-size: 2.8rem;
+  margin-bottom: 3rem;
+  color: #e3f2fd;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 1px;
+}
+
 .service-cards {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2rem;
+  max-width: 1100px;
+  margin: auto;
 }
+
 .card {
-  background: white;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  flex: 1;
-  max-width: 250px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 2rem 1.5rem;
+  color: #e0f7fa;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: all 0.35s ease;
+  border: 1px solid rgba(99, 193, 219, 0.2);
 }
+
+.card h3 {
+  margin-bottom: 0.8rem;
+  color: rgb(99, 193, 219);
+  font-size: 1.4rem;
+}
+
+.card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 0 30px rgba(99, 193, 219, 0.4);
+  border-color: rgb(99, 193, 219);
+}
+
 .footer {
   background: #1976d2;
   color: white;
@@ -319,7 +357,7 @@ body {
   margin-top: 2rem;
 }
 /* ===================== */
-/* AI CHATBOT — H.E.A.L THEME */
+/* AI CHATBOT — Health Nexus THEME */
 /* ===================== */
 
 /* Floating Chatbot Button */
@@ -467,5 +505,52 @@ body {
 .chatbot-input button:hover {
   transform: scale(1.05);
   box-shadow: 0 0 10px rgba(99, 193, 219, 0.5);
+}
+
+.about {
+  padding: 5rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about p {
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  padding: 3rem;
+  color: #e3f2fd;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(99, 193, 219, 0.25);
+}
+
+.about h2 {
+  position: absolute;
+  margin-top: -15rem;
+  color: rgb(99, 193, 219);
+  font-size: 2.4rem;
+}
+
+.contact {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #081229, #0f253a);
+  color: #e3f2fd;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-family: "Bebas Neue", sans-serif;
+}
+
+.contact p {
+  font-size: 1.05rem;
+  margin: 0.6rem 0;
+  opacity: 0.9;
 }
 
