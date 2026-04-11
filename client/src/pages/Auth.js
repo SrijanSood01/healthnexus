@@ -6,6 +6,8 @@ import "./Auth.css";
 function Auth() {
 
   const [isLogin, setIsLogin] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -154,13 +156,25 @@ function Auth() {
 
               <label>Password</label>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                onChange={handleChange}
-                required
-              />
+              {/* PASSWORD FIELD WITH EYE BUTTON */}
+              <div className="password-field">
+
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Enter your password"
+                  onChange={handleChange}
+                  required
+                />
+
+                <span
+                  className="toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </span>
+
+              </div>
 
               <button type="submit">
                 {isLogin ? "Login" : "Register"}

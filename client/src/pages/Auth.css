@@ -167,3 +167,22 @@ form button:hover {
     min-height: 50vh;
   }
 }
+
+.password-field{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input{
+  flex: 1;
+  padding-right: 40px; /* space for eye icon */
+}
+
+.toggle-password{
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}

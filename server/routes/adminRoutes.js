@@ -1,10 +1,13 @@
 import express from "express";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 const router = express.Router();
 
 
-// Dashboard stats
+// ==========================
+// Dashboard Stats
+// ==========================
 router.get("/stats", async (req, res) => {
   try {
 
@@ -23,7 +26,9 @@ router.get("/stats", async (req, res) => {
 });
 
 
-// Get all users
+// ==========================
+// Get All Users
+// ==========================
 router.get("/users", async (req, res) => {
 
   try {
@@ -33,13 +38,17 @@ router.get("/users", async (req, res) => {
     res.json(users);
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
 
 });
 
 
-// Add new user
+// ==========================
+// Add New User (Admin)
+// ==========================
 router.post("/add-user", async (req, res) => {
 
   try {
@@ -54,27 +63,38 @@ router.post("/add-user", async (req, res) => {
       });
     }
 
+    // Count existing users in department
     const count = await User.countDocuments({ role });
 
+    // Generate serial number
     const serial = String(count + 1).padStart(4, "0");
 
-    const deptCode = role.substring(0,3).toUpperCase();
+    // Department code
+    const deptCode = role.substring(0, 3).toUpperCase();
 
+    // Employee Number
     const empNo = deptCode + serial;
 
+    // Auto Email
     const email = `${empNo.toLowerCase()}@healthnexus.in`;
 
+    // Auto Password
     const password =
       name.split(" ")[0].toLowerCase() + "@" + empNo;
 
     console.log("Generated:", empNo, email, password);
 
+    // 🔐 HASH PASSWORD
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save user
     const newUser = new User({
       name,
       role,
       email,
       empNo,
-      password
+      password: hashedPassword,
+      status: "Active"
     });
 
     const savedUser = await newUser.save();
@@ -85,7 +105,7 @@ router.post("/add-user", async (req, res) => {
       message: "User Created Successfully",
       empNo,
       email,
-      password
+      password // send original password to admin
     });
 
   } catch (error) {
@@ -99,6 +119,47 @@ router.post("/add-user", async (req, res) => {
 
   }
 
+});
+
+// ==========================
+// Update User
+// ==========================
+router.put("/update-user/:id", async (req, res) => {
+  try {
+
+    const { name, role } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, role },
+      { new: true }
+    );
+
+    res.json({
+      message: "User updated successfully",
+      user: updatedUser
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================
+// Delete User
+// ==========================
+router.delete("/delete-user/:id", async (req, res) => {
+  try {
+
+    await User.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "User deleted successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 export default router;

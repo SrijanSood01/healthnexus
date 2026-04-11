@@ -10,17 +10,17 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
+useEffect(() => {
 
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
+  const handleScroll = () => setScrolled(window.scrollY > 50);
+  window.addEventListener("scroll", handleScroll);
 
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+  const token = localStorage.getItem("token");
+  setIsLoggedIn(!!token);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
 
-  }, []);
+}, [location]);
 
 
   const goToMyPage = () => {

@@ -16,6 +16,8 @@ function AdminDashboard() {
 
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const [editMode, setEditMode] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     role: ""
@@ -43,6 +45,10 @@ function AdminDashboard() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+
+  // =============================
+  // ADD USER
+  // =============================
   const addUser = async () => {
 
     const res = await fetch(
@@ -59,7 +65,7 @@ function AdminDashboard() {
     const data = await res.json();
 
     alert(
-      `User Created
+`User Created
 
 Employee No: ${data.empNo}
 Email: ${data.email}
@@ -71,6 +77,70 @@ Password: ${data.password}`
 
   };
 
+
+  // =============================
+  // UPDATE USER
+  // =============================
+  const updateUser = async () => {
+
+    await fetch(
+      `http://localhost:5000/api/admin/update-user/${selectedUser._id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      }
+    );
+
+    setShowModal(false);
+    setEditMode(false);
+    loadUsers();
+
+  };
+
+
+  // =============================
+  // DELETE USER
+  // =============================
+  const deleteUser = async (id) => {
+
+    const confirmDelete = window.confirm("Delete this user?");
+
+    if (!confirmDelete) return;
+
+    await fetch(
+      `http://localhost:5000/api/admin/delete-user/${id}`,
+      { method: "DELETE" }
+    );
+
+    loadUsers();
+
+  };
+
+
+  // =============================
+  // EDIT USER
+  // =============================
+  const openEdit = (user) => {
+
+    setSelectedUser(user);
+
+    setForm({
+      name: user.name,
+      role: user.role
+    });
+
+    setEditMode(true);
+    setShowModal(true);
+
+  };
+
+
+  // =============================
+  // TOGGLE STATUS
+  // =============================
   const toggleStatus = (index) => {
 
     const updatedUsers = [...users];
@@ -84,17 +154,24 @@ Password: ${data.password}`
 
   };
 
+
+  // =============================
+  // INFO MODAL
+  // =============================
   const openInfo = (user) => {
     setSelectedUser(user);
     setShowInfo(true);
   };
 
+
   return (
+
     <div className="dashboard admin-dashboard">
 
       <h2>Admin Dashboard</h2>
 
-      {/* Stats */}
+
+      {/* ================= Stats ================= */}
       <section className="admin-stats">
 
         <div className="stat-card">
@@ -115,12 +192,16 @@ Password: ${data.password}`
       </section>
 
 
-      {/* Add Staff Button */}
+      {/* ================= Add Staff Button ================= */}
       <div className="add-user-btn-container">
 
         <button
           className="open-form-btn"
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setEditMode(false);
+            setForm({ name: "", role: "" });
+            setShowModal(true);
+          }}
         >
           + Add Staff
         </button>
@@ -128,7 +209,7 @@ Password: ${data.password}`
       </div>
 
 
-      {/* Users Table */}
+      {/* ================= Users Table ================= */}
       <section className="user-management">
 
         <h3>User Management</h3>
@@ -172,6 +253,20 @@ Password: ${data.password}`
                       ℹ
                     </button>
 
+                    <button
+                      className="edit-btn"
+                      onClick={() => openEdit(user)}
+                    >
+                      ✏️
+                    </button>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() => deleteUser(user._id)}
+                    >
+                      🗑️
+                    </button>
+
                   </div>
                 </td>
 
@@ -186,7 +281,7 @@ Password: ${data.password}`
       </section>
 
 
-      {/* Reports */}
+      {/* ================= Reports ================= */}
       <section className="reports">
 
         <h3>Analytics & Reports</h3>
@@ -203,22 +298,27 @@ Password: ${data.password}`
       </section>
 
 
-      {/* Add User Modal */}
+      {/* ================= Add/Edit Modal ================= */}
       {showModal && (
 
         <div className="modal-overlay">
 
           <div className="modal">
 
-            <h3>Add Staff</h3>
+            <h3>{editMode ? "Edit Staff" : "Add Staff"}</h3>
 
             <input
               name="name"
               placeholder="Full Name"
+              value={form.name}
               onChange={handleChange}
             />
 
-            <select name="role" onChange={handleChange}>
+            <select
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+            >
               <option value="">Select Department</option>
               <option value="Doctor">Doctor</option>
               <option value="Nurse">Nurse</option>
@@ -230,8 +330,8 @@ Password: ${data.password}`
 
             <div className="modal-buttons">
 
-              <button onClick={addUser}>
-                Create User
+              <button onClick={editMode ? updateUser : addUser}>
+                {editMode ? "Update User" : "Create User"}
               </button>
 
               <button
@@ -250,7 +350,7 @@ Password: ${data.password}`
       )}
 
 
-      {/* Info Modal */}
+      {/* ================= Info Modal ================= */}
       {showInfo && selectedUser && (
 
         <div className="modal-overlay">
@@ -263,7 +363,6 @@ Password: ${data.password}`
             <p><b>Department:</b> {selectedUser.role}</p>
             <p><b>Employee ID:</b> {selectedUser.empNo}</p>
             <p><b>Email:</b> {selectedUser.email}</p>
-            <p><b>Password:</b> {selectedUser.password}</p>
 
             <button
               className="close-btn"
@@ -279,6 +378,7 @@ Password: ${data.password}`
       )}
 
     </div>
+
   );
 }
 
