@@ -59,9 +59,9 @@ function Navbar() {
     <nav className={`navbar ${scrolled ? "navbar-scrolled" : ""}`}>
       <div className="navbar-left">
         <div className="logo">
-          <img src={logo} alt="HEAL Logo" className="logo-img" />
+          <img src={logo} alt="healthnexus Logo" className="logo-img" />
           <div className="logo-copy">
-            <h2>HEAL</h2>
+            <h2>healthnexus</h2>
             <span>Hospital Ecosystem</span>
           </div>
         </div>

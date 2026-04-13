@@ -5,7 +5,7 @@ function AIChatbot() {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "Hello. I am your HEAL assistant. Ask me about appointments, reports, or dashboard guidance.",
+      text: "Hello. I am your healthnexus assistant. Ask me about appointments, reports, or dashboard guidance.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -35,7 +35,7 @@ function AIChatbot() {
         <div className="chatbot-window">
           <div className="chatbot-header">
             <div>
-              <h4>HEAL Assistant</h4>
+              <h4>healthnexus Assistant</h4>
               <p>Quick support for the hospital portal</p>
             </div>
             <button type="button" onClick={() => setIsOpen(false)}>

@@ -10,11 +10,11 @@ function Home() {
         <div className="hero-text">
           <h1>Care operations, connected across every department.</h1>
           <p>
-            HEAL brings patient care, doctor workflows, pharmacy operations, and pathology
+            healthnexus brings patient care, doctor workflows, pharmacy operations, and pathology
             updates into one calm and reliable hospital workspace.
           </p>
           <button type="button" className="cta-btn" onClick={() => navigate("/auth")}>
-            Open HEAL Portal
+            Open healthnexus Portal
           </button>
         </div>
       </section>
@@ -42,9 +42,9 @@ function Home() {
       </section>
 
       <section className="about">
-        <h2>About HEAL</h2>
+        <h2>About healthnexus</h2>
         <p>
-          HEAL is designed for hospitals that want a clean, structured digital layer over daily
+          healthnexus is designed for hospitals that want a clean, structured digital layer over daily
           operations. The experience stays minimal, while the workflows remain practical for
           patients, doctors, pharmacy teams, and pathology staff.
         </p>
@@ -58,7 +58,7 @@ function Home() {
       </section>
 
       <footer className="footer">
-        <p>© 2026 HEAL Hospital Ecosystem. All rights reserved.</p>
+        <p>© 2026 healthnexus Hospital Ecosystem. All rights reserved.</p>
       </footer>
     </div>
   );
