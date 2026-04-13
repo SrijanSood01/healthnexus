@@ -38,6 +38,7 @@ function Navbar() {
       doctor: "/doctor",
       patient: "/patient",
       admin: "/admin",
+      nurse: "/nurse",
       pharmacy: "/pharmacy",
       pathology: "/pathology",
     };
@@ -51,7 +52,7 @@ function Navbar() {
     navigate("/auth");
   };
 
-  const isMyPageActive = ["/doctor", "/patient", "/admin", "/pharmacy", "/pathology"].includes(
+  const isMyPageActive = ["/doctor", "/patient", "/admin", "/nurse", "/pharmacy", "/pathology"].includes(
     location.pathname,
   );
 

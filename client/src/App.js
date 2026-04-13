@@ -7,6 +7,7 @@ import Auth from "./pages/Auth";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import NurseDashboard from "./pages/NurseDashboard";
 import PharmacyDashboard from "./pages/PharmacyDashboard";
 import PathologyDashboard from "./pages/PathologyDashboard";
 import MyPageRedirect from "./pages/MyPageRedirect";
@@ -26,6 +27,7 @@ function App() {
         <Route path="/doctor" element={<DoctorDashboard />} />
         <Route path="/patient" element={<PatientDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/nurse" element={<NurseDashboard />} />
         <Route path="/pharmacy" element={<PharmacyDashboard />} />
         <Route path="/pathology" element={<PathologyDashboard />} />
       </Routes>

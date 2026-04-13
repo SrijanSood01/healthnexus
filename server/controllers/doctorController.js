@@ -42,6 +42,14 @@ export const createDoctor = async (req, res) => {
       data: populatedDoctor,
     });
   } catch (error) {
+    if (error?.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "This user already has a doctor profile. Please login with another doctor account.",
+        data: null,
+      });
+    }
+
     return res.status(500).json({
       success: false,
       message: error.message || "Failed to create doctor profile",

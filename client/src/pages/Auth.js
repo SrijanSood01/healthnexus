@@ -21,6 +21,7 @@ function Auth() {
       admin: "/admin",
       doctor: "/doctor",
       patient: "/patient",
+      nurse: "/nurse",
       pharmacy: "/pharmacy",
       pathology: "/pathology",
     };
@@ -36,6 +37,7 @@ function Auth() {
         admin: "/admin",
         doctor: "/doctor",
         patient: "/patient",
+        nurse: "/nurse",
         pharmacy: "/pharmacy",
         pathology: "/pathology",
       };

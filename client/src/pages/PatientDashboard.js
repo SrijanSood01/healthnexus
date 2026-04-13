@@ -73,10 +73,15 @@ function PatientDashboard() {
 
   const validateProfileForm = () => {
     const nextErrors = {};
+    const normalizedPhone = profileForm.phone.trim();
 
     if (!profileForm.dob) nextErrors.dob = "Date of birth is required.";
     if (!profileForm.gender) nextErrors.gender = "Gender is required.";
-    if (!profileForm.phone.trim()) nextErrors.phone = "Phone is required.";
+    if (!normalizedPhone) {
+      nextErrors.phone = "Phone is required.";
+    } else if (!/^\d{10}$/.test(normalizedPhone)) {
+      nextErrors.phone = "Phone must contain exactly 10 digits.";
+    }
     if (!profileForm.address.trim()) nextErrors.address = "Address is required.";
 
     setProfileErrors(nextErrors);
@@ -162,10 +167,12 @@ function PatientDashboard() {
 
   const handleProfileChange = (event) => {
     const { name, value } = event.target;
+    const nextValue =
+      name === "phone" ? value.replace(/\D/g, "").slice(0, 10) : value;
 
     setProfileForm((currentValue) => ({
       ...currentValue,
-      [name]: value,
+      [name]: nextValue,
     }));
 
     setProfileErrors((currentValue) => ({
@@ -365,9 +372,12 @@ function PatientDashboard() {
                       <input
                         id="phone"
                         name="phone"
-                        type="text"
+                        type="tel"
                         value={profileForm.phone}
                         onChange={handleProfileChange}
+                        inputMode="numeric"
+                        maxLength={10}
+                        placeholder="Enter 10-digit phone number"
                         className={profileErrors.phone ? "input-error" : ""}
                       />
                       {profileErrors.phone ? <span className="field-error">{profileErrors.phone}</span> : null}

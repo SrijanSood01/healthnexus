@@ -19,6 +19,7 @@ function MyPageRedirect() {
     if (r === "doctor") navigate("/doctor");
     else if (r === "patient") navigate("/patient");
     else if (r === "admin") navigate("/admin");
+    else if (r === "nurse") navigate("/nurse");
     else if (r === "pharmacy") navigate("/pharmacy");
     else if (r === "pathology") navigate("/pathology");
     else navigate("/");

@@ -27,8 +27,12 @@ function AdminDashboard() {
   const [deleteLoadingId, setDeleteLoadingId] = useState("");
   const [pageError, setPageError] = useState("");
   const [expandedUserId, setExpandedUserId] = useState(null);
+  const [activeSection, setActiveSection] = useState("overview");
 
   const initializedRef = useRef(false);
+  const overviewRef = useRef(null);
+  const activityRef = useRef(null);
+  const staffRef = useRef(null);
   const userName = localStorage.getItem("name") || "Admin";
 
   const loadDashboardData = async () => {
@@ -56,6 +60,20 @@ function AdminDashboard() {
     initializedRef.current = true;
     loadDashboardData();
   }, []);
+
+  const scrollToSection = (section) => {
+    const sectionMap = {
+      overview: overviewRef,
+      activity: activityRef,
+      staff: staffRef,
+    };
+
+    setActiveSection(section);
+    sectionMap[section]?.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   const validateForm = () => {
     const nextErrors = {};
@@ -192,13 +210,25 @@ function AdminDashboard() {
           </div>
 
           <div className="sidebar-nav">
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "staff" ? "active" : ""}
+              onClick={() => scrollToSection("staff")}
+            >
               Staff <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "activity" ? "active" : ""}
+              onClick={() => scrollToSection("activity")}
+            >
               Activity <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "overview" ? "active" : ""}
+              onClick={() => scrollToSection("overview")}
+            >
               Overview <FaChevronRight />
             </button>
           </div>
@@ -246,7 +276,7 @@ function AdminDashboard() {
                 </article>
               </div>
 
-              <div className="section-grid">
+              <div ref={overviewRef} className="section-grid">
                 <section className="section-card">
                   <div className="section-heading">
                     <div>
@@ -292,7 +322,35 @@ function AdminDashboard() {
                 </section>
               </div>
 
-              <section className="section-card full-width">
+              <section ref={activityRef} className="section-card full-width">
+                <div className="section-heading">
+                  <div>
+                    <h3>Activity Overview</h3>
+                    <p>Quick visibility into staffing movement and account activity.</p>
+                  </div>
+                </div>
+
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <span>Recently Added</span>
+                    <strong>{users[0]?.name || "-"}</strong>
+                  </div>
+                  <div className="detail-item">
+                    <span>Newest Role</span>
+                    <strong>{users[0]?.role || "-"}</strong>
+                  </div>
+                  <div className="detail-item">
+                    <span>Active Staff</span>
+                    <strong>{users.filter((user) => user.status === "Active").length}</strong>
+                  </div>
+                  <div className="detail-item">
+                    <span>Total Departments</span>
+                    <strong>{Array.from(new Set(users.map((user) => user.role))).length}</strong>
+                  </div>
+                </div>
+              </section>
+
+              <section ref={staffRef} className="section-card full-width">
                 <div className="section-heading">
                   <div>
                     <h3>User Management</h3>

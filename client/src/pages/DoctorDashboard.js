@@ -111,15 +111,16 @@ function DoctorDashboard() {
       }
 
       try {
-        const response = await axios.get(`${API_BASE_URL}/doctor/user/${userId}`);
-        const doctorProfile = response.data.data;
+      const response = await axios.get(`${API_BASE_URL}/doctor/user/${userId}`);
+      const doctorProfile = response.data.data;
 
-        setDoctor(doctorProfile);
-        await loadAppointments(doctorProfile._id);
-      } catch (error) {
-        if (error.response?.status !== 404) {
-          setPageError(error.response?.data?.message || "Failed to load doctor dashboard.");
-        }
+      setDoctor(doctorProfile);
+      setPageError("");
+      await loadAppointments(doctorProfile._id);
+    } catch (error) {
+      if (error.response?.status !== 404) {
+        setPageError(error.response?.data?.message || "Failed to load doctor dashboard.");
+      }
       } finally {
         setPageLoading(false);
       }
@@ -180,7 +181,11 @@ function DoctorDashboard() {
       alert(response.data.message);
       await loadAppointments(response.data.data._id);
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to create doctor profile.");
+      const message =
+        error.response?.data?.message ||
+        "Failed to create doctor profile.";
+      setPageError(message);
+      alert(message);
     } finally {
       setProfileSubmitting(false);
     }
