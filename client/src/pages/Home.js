@@ -1,65 +1,64 @@
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="home">
-      
-      {/* Hero Section */}
       <section className="hero">
         <div className="hero-text">
-          <h1>Welcome to Health Nexus Hospital</h1>
-          <p>Your health, our priority. Experience smarter, faster, and compassionate healthcare.</p>
-          <button className="cta-btn">Book Appointment</button>
-        </div>
-        <div className="hero-image">
+          <h1>Care operations, connected across every department.</h1>
+          <p>
+            HEAL brings patient care, doctor workflows, pharmacy operations, and pathology
+            updates into one calm and reliable hospital workspace.
+          </p>
+          <button type="button" className="cta-btn" onClick={() => navigate("/auth")}>
+            Open HEAL Portal
+          </button>
         </div>
       </section>
 
-      {/* Services Section */}
       <section className="services">
-        <h2>Our Services</h2>
+        <h2>Core Workflows</h2>
         <div className="service-cards">
           <div className="card">
-            <h3>Doctor Consultation</h3>
-            <p>Connect with our experienced doctors for personalized care.</p>
+            <h3>Patient Care</h3>
+            <p>Book appointments, review prescriptions, and keep reports easy to access.</p>
+          </div>
+          <div className="card">
+            <h3>Doctor Desk</h3>
+            <p>Manage visits, view assigned patients, and issue prescriptions with less friction.</p>
           </div>
           <div className="card">
             <h3>Pharmacy</h3>
-            <p>Order medicines online with quick and reliable delivery.</p>
+            <p>Track medicine inventory, stock levels, and essential catalog updates in one place.</p>
           </div>
           <div className="card">
-            <h3>Diagnostics</h3>
-            <p>Book lab tests and access your reports anytime, anywhere.</p>
-          </div>
-          <div className="card">
-            <h3>Emergency Care</h3>
-            <p>24/7 emergency support for immediate medical needs.</p>
+            <h3>Pathology</h3>
+            <p>Create and publish reports quickly while keeping clinical visibility consistent.</p>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
       <section className="about">
-        <h2>About Us</h2>
+        <h2>About HEAL</h2>
         <p>
-          Health Nexus is a modern digital hospital committed to delivering
-          efficient, transparent, and patient-friendly healthcare. With AI-driven
-          insights, seamless coordination, and cloud-powered systems, we ensure
-          your health journey is smooth and stress-free.
+          HEAL is designed for hospitals that want a clean, structured digital layer over daily
+          operations. The experience stays minimal, while the workflows remain practical for
+          patients, doctors, pharmacy teams, and pathology staff.
         </p>
       </section>
 
-      {/* Contact Section */}
       <section className="contact">
-        <h2>Get in Touch</h2>
-        <p>📍 Chandigarh, India</p>
-        <p>📞 +91 98765 43210</p>
-        <p>✉️ contact@healhospital.com</p>
+        <h2>Contact</h2>
+        <p>Chandigarh, India</p>
+        <p>+91 98765 43210</p>
+        <p>contact@healhospital.com</p>
       </section>
 
-      {/* Footer */}
       <footer className="footer">
-        <p>© 2025 Health Nexus Hospital | All Rights Reserved</p>
+        <p>© 2026 HEAL Hospital Ecosystem. All rights reserved.</p>
       </footer>
     </div>
   );

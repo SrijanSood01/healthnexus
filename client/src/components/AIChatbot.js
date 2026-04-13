@@ -3,47 +3,53 @@ import React, { useState } from "react";
 function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { sender: "bot", text: "Hello 👋 I’m your Health Nexus Assistant. How can I help you today?" }
+    {
+      sender: "bot",
+      text: "Hello. I am your HEAL assistant. Ask me about appointments, reports, or dashboard guidance.",
+    },
   ]);
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    if (input.trim() === "") return;
+    if (!input.trim()) {
+      return;
+    }
 
-    // Add user message
-    const newMessages = [...messages, { sender: "user", text: input }];
-
-    // Add bot reply (for now static)
-    newMessages.push({ sender: "bot", text: "✅ Thanks! I’ll forward this to our system." });
-
-    setMessages(newMessages);
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      { sender: "user", text: input.trim() },
+      { sender: "bot", text: "Thanks. This assistant is in demo mode and your request has been noted." },
+    ]);
     setInput("");
   };
 
   return (
     <div className="chatbot">
-      {/* Floating Button */}
       {!isOpen && (
-        <button className="chatbot-btn" onClick={() => setIsOpen(true)}>
-          💬
+        <button type="button" className="chatbot-btn" onClick={() => setIsOpen(true)}>
+          Chat
         </button>
       )}
 
-      {/* Chat Window */}
       {isOpen && (
         <div className="chatbot-window">
           <div className="chatbot-header">
-            <h4>Health Nexus Assistant</h4>
-            <button onClick={() => setIsOpen(false)}>✖</button>
+            <div>
+              <h4>HEAL Assistant</h4>
+              <p>Quick support for the hospital portal</p>
+            </div>
+            <button type="button" onClick={() => setIsOpen(false)}>
+              X
+            </button>
           </div>
 
           <div className="chatbot-messages">
-            {messages.map((msg, index) => (
-              <div 
-                key={index} 
-                className={`chat-msg ${msg.sender === "user" ? "user-msg" : "bot-msg"}`}
+            {messages.map((message, index) => (
+              <div
+                key={`${message.sender}-${index}`}
+                className={`chat-msg ${message.sender === "user" ? "user-msg" : "bot-msg"}`}
               >
-                {msg.text}
+                {message.text}
               </div>
             ))}
           </div>
@@ -52,10 +58,17 @@ function AIChatbot() {
             <input
               type="text"
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(event) => setInput(event.target.value)}
               placeholder="Type a message..."
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleSend();
+                }
+              }}
             />
-            <button onClick={handleSend}>Send</button>
+            <button type="button" onClick={handleSend}>
+              Send
+            </button>
           </div>
         </div>
       )}

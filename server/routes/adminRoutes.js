@@ -1,164 +1,168 @@
 import express from "express";
-import User from "../models/User.js";
 import bcrypt from "bcryptjs";
+import Appointment from "../models/Appointment.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
-
-// ==========================
-// Dashboard Stats
-// ==========================
 router.get("/stats", async (req, res) => {
   try {
+    const [users, doctors, appointments] = await Promise.all([
+      User.countDocuments(),
+      User.countDocuments({ role: "doctor" }),
+      Appointment.countDocuments(),
+    ]);
 
-    const users = await User.countDocuments();
-    const doctors = await User.countDocuments({ role: "Doctor" });
-
-    res.json({
-      users,
-      doctors,
-      appointments: 78
+    return res.json({
+      success: true,
+      message: "Admin stats fetched successfully",
+      data: {
+        users,
+        doctors,
+        appointments,
+      },
     });
-
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch admin stats",
+      data: null,
+    });
   }
 });
 
-
-// ==========================
-// Get All Users
-// ==========================
 router.get("/users", async (req, res) => {
-
   try {
-
     const users = await User.find().sort({ createdAt: -1 });
 
-    res.json(users);
-
+    return res.json({
+      success: true,
+      message: "Users fetched successfully",
+      data: users,
+    });
   } catch (error) {
-
-    res.status(500).json({ error: error.message });
-
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch users",
+      data: null,
+    });
   }
-
 });
 
-
-// ==========================
-// Add New User (Admin)
-// ==========================
 router.post("/add-user", async (req, res) => {
-
   try {
-
-    console.log("Incoming body:", req.body);
-
     const { name, role } = req.body;
 
     if (!name || !role) {
       return res.status(400).json({
-        message: "Name and role are required"
+        success: false,
+        message: "Name and role are required",
+        data: null,
       });
     }
 
-    // Count existing users in department
-    const count = await User.countDocuments({ role });
-
-    // Generate serial number
+    const normalizedRole = role.toLowerCase();
+    const count = await User.countDocuments({ role: normalizedRole });
     const serial = String(count + 1).padStart(4, "0");
-
-    // Department code
-    const deptCode = role.substring(0, 3).toUpperCase();
-
-    // Employee Number
-    const empNo = deptCode + serial;
-
-    // Auto Email
+    const deptCode = normalizedRole.substring(0, 3).toUpperCase();
+    const empNo = `${deptCode}${serial}`;
     const email = `${empNo.toLowerCase()}@healthnexus.in`;
-
-    // Auto Password
-    const password =
-      name.split(" ")[0].toLowerCase() + "@" + empNo;
-
-    console.log("Generated:", empNo, email, password);
-
-    // 🔐 HASH PASSWORD
+    const password = `${name.split(" ")[0].toLowerCase()}@${empNo}`;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Save user
-    const newUser = new User({
+    await User.create({
       name,
-      role,
+      role: normalizedRole,
       email,
       empNo,
       password: hashedPassword,
-      status: "Active"
+      status: "Active",
     });
 
-    const savedUser = await newUser.save();
-
-    console.log("Saved user:", savedUser);
-
-    res.json({
-      message: "User Created Successfully",
-      empNo,
-      email,
-      password // send original password to admin
+    return res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: {
+        empNo,
+        email,
+        password,
+      },
     });
-
   } catch (error) {
-
-    console.error("Error creating user:", error);
-
-    res.status(500).json({
-      message: "Error creating user",
-      error: error.message
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to create user",
+      data: null,
     });
-
   }
-
 });
 
-// ==========================
-// Update User
-// ==========================
 router.put("/update-user/:id", async (req, res) => {
   try {
-
     const { name, role } = req.body;
+
+    if (!name || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Name and role are required",
+        data: null,
+      });
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       req.params.id,
-      { name, role },
-      { new: true }
+      {
+        name,
+        role: role.toLowerCase(),
+      },
+      { new: true },
     );
 
-    res.json({
-      message: "User updated successfully",
-      user: updatedUser
-    });
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+        data: null,
+      });
+    }
 
+    return res.json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update user",
+      data: null,
+    });
   }
 });
 
-// ==========================
-// Delete User
-// ==========================
 router.delete("/delete-user/:id", async (req, res) => {
   try {
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
 
-    await User.findByIdAndDelete(req.params.id);
+    if (!deletedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+        data: null,
+      });
+    }
 
-    res.json({
-      message: "User deleted successfully"
+    return res.json({
+      success: true,
+      message: "User deleted successfully",
+      data: deletedUser,
     });
-
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to delete user",
+      data: null,
+    });
   }
 });
 
