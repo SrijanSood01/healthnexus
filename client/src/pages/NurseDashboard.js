@@ -12,8 +12,12 @@ function NurseDashboard() {
   const [reports, setReports] = useState([]);
   const [pageError, setPageError] = useState("");
   const [expandedPatientId, setExpandedPatientId] = useState(null);
+  const [activeSection, setActiveSection] = useState("patient-care");
 
   const initializedRef = useRef(false);
+  const scheduleRef = useRef(null);
+  const followUpRef = useRef(null);
+  const patientCareRef = useRef(null);
   const userName = localStorage.getItem("name") || "Nurse";
 
   const loadDashboardData = async () => {
@@ -56,11 +60,6 @@ function NurseDashboard() {
     });
   }, [appointments]);
 
-  const pendingReports = useMemo(
-    () => reports.filter((report) => report.status === "pending").length,
-    [reports],
-  );
-
   const visiblePatients = useMemo(
     () =>
       patients.filter((patient) => {
@@ -75,6 +74,29 @@ function NurseDashboard() {
       }),
     [patients],
   );
+
+  const visiblePatientIds = useMemo(
+    () => new Set(visiblePatients.map((patient) => patient._id)),
+    [visiblePatients],
+  );
+
+  const visibleReports = useMemo(
+    () =>
+      reports.filter((report) => {
+        return Boolean(report?._id && report?.patientId?._id && visiblePatientIds.has(report.patientId._id));
+      }),
+    [reports, visiblePatientIds],
+  );
+
+  const pendingVisibleReports = useMemo(
+    () => visibleReports.filter((report) => report.status === "pending").length,
+    [visibleReports],
+  );
+
+  const handleSectionNavigation = (sectionId, sectionRef) => {
+    setActiveSection(sectionId);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   if (pageLoading) {
     return (
@@ -105,18 +127,30 @@ function NurseDashboard() {
             </div>
             <div className="sidebar-meta-item">
               <span>Reports Pending</span>
-              <strong>{pendingReports}</strong>
+              <strong>{pendingVisibleReports}</strong>
             </div>
           </div>
 
           <div className="sidebar-nav">
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "patient-care" ? "active" : ""}
+              onClick={() => handleSectionNavigation("patient-care", patientCareRef)}
+            >
               Patient Care <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "schedule" ? "active" : ""}
+              onClick={() => handleSectionNavigation("schedule", scheduleRef)}
+            >
               Schedule <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "follow-up" ? "active" : ""}
+              onClick={() => handleSectionNavigation("follow-up", followUpRef)}
+            >
               Follow-up <FaChevronRight />
             </button>
           </div>
@@ -145,16 +179,16 @@ function NurseDashboard() {
                 </article>
                 <article className="stat-card">
                   <span className="stat-label">Pending Reports</span>
-                  <span className="stat-value">{pendingReports}</span>
+                  <span className="stat-value">{pendingVisibleReports}</span>
                 </article>
               </div>
 
               <div className="section-grid">
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={scheduleRef}>
                   <div className="section-heading">
                     <div>
-                      <h3>Care Overview</h3>
-                      <p>A quick nursing snapshot for shift awareness.</p>
+                      <h3>Schedule Overview</h3>
+                      <p>A quick nursing snapshot for shift timing and patient flow.</p>
                     </div>
                   </div>
 
@@ -178,25 +212,36 @@ function NurseDashboard() {
                   </div>
                 </section>
 
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={followUpRef}>
                   <div className="section-heading">
                     <div>
-                      <h3>Shift Focus</h3>
-                      <p>Easy reminders for the most common nursing tasks.</p>
+                      <h3>Follow-up Focus</h3>
+                      <p>Track the most important care reminders for the current shift.</p>
                     </div>
                   </div>
 
-                  <div className="tag-list">
-                    <span className="tag">Vitals Tracking</span>
-                    <span className="tag">Patient Support</span>
-                    <span className="tag">Medication Follow-up</span>
-                    <span className="tag">Doctor Coordination</span>
-                    <span className="tag">Report Awareness</span>
+                  <div className="detail-grid">
+                    <div className="detail-item">
+                      <span>Pending Reports</span>
+                      <strong>{pendingVisibleReports}</strong>
+                    </div>
+                    <div className="detail-item">
+                      <span>Today&apos;s Appointments</span>
+                      <strong>{todayAppointments.length}</strong>
+                    </div>
+                    <div className="detail-item">
+                      <span>Scheduled Visits</span>
+                      <strong>{appointments.filter((appointment) => appointment.status === "scheduled").length}</strong>
+                    </div>
+                    <div className="detail-item">
+                      <span>Care Priorities</span>
+                      <strong>Vitals and follow-up</strong>
+                    </div>
                   </div>
                 </section>
               </div>
 
-              <section className="section-card full-width">
+              <section className="section-card full-width dashboard-anchor" ref={patientCareRef}>
                 <div className="section-heading">
                   <div>
                     <h3>Patient Care List</h3>
@@ -224,7 +269,7 @@ function NurseDashboard() {
                           const patientAppointments = appointments.filter(
                             (appointment) => appointment.patientId?._id === patient._id,
                           );
-                          const patientReports = reports.filter((report) => report.patientId?._id === patient._id);
+                          const patientReports = visibleReports.filter((report) => report.patientId?._id === patient._id);
 
                           return (
                             <React.Fragment key={patient._id}>

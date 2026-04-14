@@ -19,8 +19,14 @@ function PharmacyDashboard() {
   const [formErrors, setFormErrors] = useState({});
   const [pageError, setPageError] = useState("");
   const [expandedMedicineId, setExpandedMedicineId] = useState(null);
+  const [activeSection, setActiveSection] = useState("inventory");
+  const [dispenseQuantities, setDispenseQuantities] = useState({});
+  const [dispenseLoadingId, setDispenseLoadingId] = useState(null);
 
   const initializedRef = useRef(false);
+  const inventoryRef = useRef(null);
+  const addMedicineRef = useRef(null);
+  const stockAlertsRef = useRef(null);
   const userName = localStorage.getItem("name") || "Pharmacy Team";
 
   const loadMedicines = async () => {
@@ -96,6 +102,46 @@ function PharmacyDashboard() {
     }
   };
 
+  const handleSectionNavigation = (sectionId, sectionRef) => {
+    setActiveSection(sectionId);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleDispenseQuantityChange = (medicineId, value) => {
+    setDispenseQuantities((currentValue) => ({
+      ...currentValue,
+      [medicineId]: value,
+    }));
+  };
+
+  const handleDispenseMedicine = async (medicine) => {
+    const quantity = Number(dispenseQuantities[medicine._id] || 1);
+
+    if (!Number.isInteger(quantity) || quantity <= 0) {
+      alert("Enter a valid quantity to dispense.");
+      return;
+    }
+
+    setDispenseLoadingId(medicine._id);
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/pharmacy/${medicine._id}/dispense`, {
+        quantity,
+      });
+
+      setDispenseQuantities((currentValue) => ({
+        ...currentValue,
+        [medicine._id]: "1",
+      }));
+      alert(response.data.message);
+      await loadMedicines();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to dispense medicine.");
+    } finally {
+      setDispenseLoadingId(null);
+    }
+  };
+
   const totalStock = medicines.reduce((sum, medicine) => sum + Number(medicine.stock || 0), 0);
   const lowStockCount = medicines.filter((medicine) => Number(medicine.stock || 0) < 10).length;
   const medicineValue = medicines.reduce(
@@ -137,13 +183,25 @@ function PharmacyDashboard() {
           </div>
 
           <div className="sidebar-nav">
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "inventory" ? "active" : ""}
+              onClick={() => handleSectionNavigation("inventory", inventoryRef)}
+            >
               Inventory <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "add-medicine" ? "active" : ""}
+              onClick={() => handleSectionNavigation("add-medicine", addMedicineRef)}
+            >
               Add Medicine <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "stock-alerts" ? "active" : ""}
+              onClick={() => handleSectionNavigation("stock-alerts", stockAlertsRef)}
+            >
               Stock Alerts <FaChevronRight />
             </button>
           </div>
@@ -177,7 +235,7 @@ function PharmacyDashboard() {
               </div>
 
               <div className="section-grid">
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={addMedicineRef}>
                   <div className="section-heading">
                     <div>
                       <h3>Add New Medicine</h3>
@@ -233,40 +291,33 @@ function PharmacyDashboard() {
                   </form>
                 </section>
 
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={stockAlertsRef}>
                   <div className="section-heading">
                     <div>
-                      <h3>Inventory Snapshot</h3>
-                      <p>Quick guidance for stock review and replenishment.</p>
+                      <h3>Stock Alerts</h3>
+                      <p>Focus on low-quantity medicines that may need replenishment soon.</p>
                     </div>
                   </div>
 
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span>Total Units</span>
-                      <strong>{totalStock}</strong>
+                  {medicines.filter((medicine) => Number(medicine.stock || 0) < 10).length === 0 ? (
+                    <div className="empty-state">No stock alerts right now.</div>
+                  ) : (
+                    <div className="detail-grid">
+                      {medicines
+                        .filter((medicine) => Number(medicine.stock || 0) < 10)
+                        .slice(0, 6)
+                        .map((medicine) => (
+                          <div className="detail-item" key={medicine._id}>
+                            <span>{medicine.name}</span>
+                            <strong>{medicine.stock} units left</strong>
+                          </div>
+                        ))}
                     </div>
-                    <div className="detail-item">
-                      <span>Low Stock Alerts</span>
-                      <strong>{lowStockCount}</strong>
-                    </div>
-                    <div className="detail-item">
-                      <span>Highest Price Item</span>
-                      <strong>
-                        {medicines.slice().sort((a, b) => Number(b.price || 0) - Number(a.price || 0))[0]?.name || "-"}
-                      </strong>
-                    </div>
-                    <div className="detail-item">
-                      <span>Lowest Stock Item</span>
-                      <strong>
-                        {medicines.slice().sort((a, b) => Number(a.stock || 0) - Number(b.stock || 0))[0]?.name || "-"}
-                      </strong>
-                    </div>
-                  </div>
+                  )}
                 </section>
               </div>
 
-              <section className="section-card full-width">
+              <section className="section-card full-width dashboard-anchor" ref={inventoryRef}>
                 <div className="section-heading">
                   <div>
                     <h3>Medicine List</h3>
@@ -331,6 +382,30 @@ function PharmacyDashboard() {
                                           <span>Created On</span>
                                           <strong>{new Date(medicine.createdAt).toLocaleDateString()}</strong>
                                         </div>
+                                      </div>
+
+                                      <div className="dispense-controls">
+                                        <div className="dispense-field">
+                                          <label htmlFor={`dispense-${medicine._id}`}>Dispense Units</label>
+                                          <input
+                                            id={`dispense-${medicine._id}`}
+                                            type="number"
+                                            min="1"
+                                            max={medicine.stock}
+                                            value={dispenseQuantities[medicine._id] ?? "1"}
+                                            onChange={(event) =>
+                                              handleDispenseQuantityChange(medicine._id, event.target.value)
+                                            }
+                                          />
+                                        </div>
+                                        <button
+                                          type="button"
+                                          className="primary-btn dispense-btn"
+                                          disabled={dispenseLoadingId === medicine._id || Number(medicine.stock || 0) === 0}
+                                          onClick={() => handleDispenseMedicine(medicine)}
+                                        >
+                                          {dispenseLoadingId === medicine._id ? "Dispensing..." : "Give Medicine"}
+                                        </button>
                                       </div>
                                     </div>
                                   </td>

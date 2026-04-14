@@ -23,8 +23,12 @@ function PathologyDashboard() {
   const [formErrors, setFormErrors] = useState({});
   const [pageError, setPageError] = useState("");
   const [expandedReportId, setExpandedReportId] = useState(null);
+  const [activeSection, setActiveSection] = useState("create-report");
 
   const initializedRef = useRef(false);
+  const createReportRef = useRef(null);
+  const reportsRef = useRef(null);
+  const patientsRef = useRef(null);
   const userName = localStorage.getItem("name") || "Pathology Team";
 
   const loadDashboardData = async () => {
@@ -108,8 +112,39 @@ function PathologyDashboard() {
     }
   };
 
-  const pendingReports = reports.filter((report) => report.status === "pending").length;
-  const completedReports = reports.filter((report) => report.status === "completed").length;
+  const handleSectionNavigation = (sectionId, sectionRef) => {
+    setActiveSection(sectionId);
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const availablePatients = patients.filter((patient) => {
+    const linkedUser = patient?.userId;
+
+    return Boolean(
+      patient?._id &&
+        linkedUser?._id &&
+        linkedUser?.name &&
+        linkedUser?.role?.toLowerCase() === "patient" &&
+        linkedUser?.status === "Active",
+    );
+  });
+  const availablePatientIds = new Set(availablePatients.map((patient) => patient._id));
+  const visibleReports = reports.filter((report) => {
+    return Boolean(report?._id && report?.patientId?._id && availablePatientIds.has(report.patientId._id));
+  });
+  const availableDoctors = doctors.filter((doctor) => {
+    const linkedUser = doctor?.userId;
+
+    return Boolean(
+      doctor?._id &&
+        linkedUser?._id &&
+        linkedUser?.name &&
+        linkedUser?.role?.toLowerCase() === "doctor" &&
+        linkedUser?.status === "Active",
+    );
+  });
+  const pendingReports = visibleReports.filter((report) => report.status === "pending").length;
+  const completedReports = visibleReports.filter((report) => report.status === "completed").length;
 
   if (pageLoading) {
     return (
@@ -132,7 +167,7 @@ function PathologyDashboard() {
           <div className="sidebar-meta">
             <div className="sidebar-meta-item">
               <span>Total Reports</span>
-              <strong>{reports.length}</strong>
+              <strong>{visibleReports.length}</strong>
             </div>
             <div className="sidebar-meta-item">
               <span>Pending Reports</span>
@@ -145,13 +180,25 @@ function PathologyDashboard() {
           </div>
 
           <div className="sidebar-nav">
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "create-report" ? "active" : ""}
+              onClick={() => handleSectionNavigation("create-report", createReportRef)}
+            >
               Create Report <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "reports" ? "active" : ""}
+              onClick={() => handleSectionNavigation("reports", reportsRef)}
+            >
               Reports <FaChevronRight />
             </button>
-            <button type="button">
+            <button
+              type="button"
+              className={activeSection === "patients" ? "active" : ""}
+              onClick={() => handleSectionNavigation("patients", patientsRef)}
+            >
               Patients <FaChevronRight />
             </button>
           </div>
@@ -180,12 +227,12 @@ function PathologyDashboard() {
                 </article>
                 <article className="stat-card">
                   <span className="stat-label">Patients</span>
-                  <span className="stat-value">{patients.length}</span>
+                  <span className="stat-value">{availablePatients.length}</span>
                 </article>
               </div>
 
               <div className="section-grid">
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={createReportRef}>
                   <div className="section-heading">
                     <div>
                       <h3>Create Report</h3>
@@ -204,7 +251,7 @@ function PathologyDashboard() {
                         className={formErrors.patientId ? "input-error" : ""}
                       >
                         <option value="">Select patient</option>
-                        {patients.map((patient) => (
+                        {availablePatients.map((patient) => (
                           <option key={patient._id} value={patient._id}>
                             {patient.userId?.name || "Patient"}
                           </option>
@@ -217,7 +264,7 @@ function PathologyDashboard() {
                       <label htmlFor="doctorId">Doctor</label>
                       <select id="doctorId" name="doctorId" value={formData.doctorId} onChange={handleChange}>
                         <option value="">Optional doctor</option>
-                        {doctors.map((doctor) => (
+                        {availableDoctors.map((doctor) => (
                           <option key={doctor._id} value={doctor._id}>
                             {doctor.userId?.name || "Doctor"}
                           </option>
@@ -259,36 +306,30 @@ function PathologyDashboard() {
                   </form>
                 </section>
 
-                <section className="section-card">
+                <section className="section-card dashboard-anchor" ref={patientsRef}>
                   <div className="section-heading">
                     <div>
-                      <h3>Workflow Summary</h3>
-                      <p>Operational snapshot for current pathology activity.</p>
+                      <h3>Patients Overview</h3>
+                      <p>Review available patient profiles before creating or updating reports.</p>
                     </div>
                   </div>
 
-                  <div className="detail-grid">
-                    <div className="detail-item">
-                      <span>Patient Profiles</span>
-                      <strong>{patients.length}</strong>
+                  {availablePatients.length === 0 ? (
+                    <div className="empty-state">No patients available.</div>
+                  ) : (
+                    <div className="detail-grid">
+                      {availablePatients.slice(0, 6).map((patient) => (
+                        <div className="detail-item" key={patient._id}>
+                          <span>{patient.userId?.name || "Patient"}</span>
+                          <strong>{patient.userId?.email || patient.phone || "Profile available"}</strong>
+                        </div>
+                      ))}
                     </div>
-                    <div className="detail-item">
-                      <span>Doctor Profiles</span>
-                      <strong>{doctors.length}</strong>
-                    </div>
-                    <div className="detail-item">
-                      <span>Latest Report</span>
-                      <strong>{reports[0]?.testName || "-"}</strong>
-                    </div>
-                    <div className="detail-item">
-                      <span>Pending Queue</span>
-                      <strong>{pendingReports}</strong>
-                    </div>
-                  </div>
+                  )}
                 </section>
               </div>
 
-              <section className="section-card full-width">
+              <section className="section-card full-width dashboard-anchor" ref={reportsRef}>
                 <div className="section-heading">
                   <div>
                     <h3>Report List</h3>
@@ -296,7 +337,7 @@ function PathologyDashboard() {
                   </div>
                 </div>
 
-                {reports.length === 0 ? (
+                {visibleReports.length === 0 ? (
                   <div className="empty-state">No reports available.</div>
                 ) : (
                   <div className="data-table-wrap">
@@ -311,7 +352,7 @@ function PathologyDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {reports.map((report) => {
+                        {visibleReports.map((report) => {
                           const isExpanded = expandedReportId === report._id;
 
                           return (

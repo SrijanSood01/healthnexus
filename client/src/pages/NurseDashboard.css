@@ -1,3 +1,13 @@
 .nurse-dashboard {
   --dashboard-accent: #f29d38;
 }
+
+.nurse-dashboard .sidebar-nav button.active {
+  background: inherit;
+  border-color: inherit;
+  color: inherit;
+}
+
+.nurse-dashboard .dashboard-anchor {
+  scroll-margin-top: 24px;
+}

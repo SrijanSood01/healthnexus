@@ -1,3 +1,13 @@
 .pathology-dashboard {
   --dashboard-accent: #cf4b6e;
 }
+
+.pathology-dashboard .sidebar-nav button.active {
+  background: inherit;
+  border-color: inherit;
+  color: inherit;
+}
+
+.pathology-dashboard .dashboard-anchor {
+  scroll-margin-top: 24px;
+}

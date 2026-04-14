@@ -1,3 +1,7 @@
 .doctor-dashboard {
   --dashboard-accent: #1d9d73;
 }
+
+.doctor-dashboard .doctor-action-row {
+  margin-top: 16px;
+}

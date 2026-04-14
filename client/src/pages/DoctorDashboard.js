@@ -224,6 +224,19 @@ function DoctorDashboard() {
     }
   };
 
+  const handleMarkAsChecked = (appointmentId) => {
+    setAppointments((currentValue) =>
+      currentValue.map((appointment) =>
+        appointment._id === appointmentId
+          ? {
+              ...appointment,
+              status: "completed",
+            }
+          : appointment,
+      ),
+    );
+  };
+
   if (pageLoading) {
     return (
       <div className="dashboard-page doctor-dashboard">
@@ -502,6 +515,7 @@ function DoctorDashboard() {
                           <tbody>
                             {appointments.map((appointment) => {
                               const isExpanded = expandedAppointmentId === appointment._id;
+                              const displayStatus = appointment.status === "completed" ? "checked" : appointment.status;
 
                               return (
                                 <React.Fragment key={appointment._id}>
@@ -510,7 +524,7 @@ function DoctorDashboard() {
                                     <td>{appointment.patientId?.phone || "-"}</td>
                                     <td>{formatDate(appointment.date)} {appointment.time}</td>
                                     <td>
-                                      <span className={`status-pill ${appointment.status}`}>{appointment.status}</span>
+                                      <span className={`status-pill ${appointment.status}`}>{displayStatus}</span>
                                     </td>
                                     <td>
                                       <button
@@ -544,6 +558,18 @@ function DoctorDashboard() {
                                               <strong>{formatDate(appointment.createdAt)}</strong>
                                             </div>
                                           </div>
+
+                                          {appointment.status === "scheduled" ? (
+                                            <div className="doctor-action-row">
+                                              <button
+                                                type="button"
+                                                className="primary-btn"
+                                                onClick={() => handleMarkAsChecked(appointment._id)}
+                                              >
+                                                Mark as Checked
+                                              </button>
+                                            </div>
+                                          ) : null}
                                         </div>
                                       </td>
                                     </tr>

@@ -142,3 +142,44 @@ export const getAppointmentsByDoctorId = async (req, res) => {
     });
   }
 };
+
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const { status } = req.body;
+
+    if (!["scheduled", "completed", "cancelled"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid appointment status is required",
+        data: null,
+      });
+    }
+
+    const appointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { status },
+      { new: true },
+    ).populate(appointmentPopulate);
+
+    if (!appointment) {
+      return res.status(404).json({
+        success: false,
+        message: "Appointment not found",
+        data: null,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "Appointment status updated successfully",
+      data: appointment,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update appointment status",
+      data: null,
+    });
+  }
+};
